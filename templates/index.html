@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectroMart</title>
+
+    <!-- SweetAlert2 CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // Function to display SweetAlert2 popup if sign-up was successful
+        function showAlert() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('success') === 'true') {
+                Swal.fire({
+                    title: 'Successful!',
+                    text: 'Welcome to ElectroMart!',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: 'rgb(153, 3, 3)',
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
+        }
+    </script>
+
+
+    <!-- Link to font awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; 
+            height: 0;
+            margin-bottom: 30px;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .search-button {
+            background-color: rgb(153, 3, 3);
+            color: white;
+            padding: 15px 30px;
+            font-size: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 50px;
+            margin-right: 20px;
+        }
+
+        .search-button:hover {
+            background-color: rgb(120, 0, 0);
+            
+        }
+
+        
+        .navbar-right a {
+            display: inline-block; 
+            text-decoration: none; 
+        }
+
+        .navbar-right button {
+            display: inline-block; 
+        }
+
+        .navbar-right a:hover {
+            background-color: #575757;  
+        }
+
+        .h1 {
+            margin-top: 50px;
+            color: rgb(83, 2, 18);
+            margin-left: 30px;
+        }
+
+        
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0, 0, 0, 0.4); 
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    </style>
+
+</head>
+<body onload="showAlert()">
+
+    <nav class="navbar">
+        <div class="navbar-left">
+            <img src="static/logo.png" alt="Logo">
+        </div>
+
+        
+        <div class="navbar-right">
+            <a href="index"><i class="fas fa-home"></i>Home</a>
+            <a href="#">About</a>
+            <a href="logout"><button class="sign-in">Sign Out</button></a>
+        </div>
+    </nav>
+
+    <!-- Video Section -->
+    <div class="video-container">
+      <video autoplay loop muted playsinline>
+        <source src="static/video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <center>
+      <a href="main">
+         <button class="search-button">Search Your Product</button>
+      </a>
+
+      <a href="collaborative">
+        <button class="search-button">Your Choice</button>
+      </a>
+    </center>
+
+    <h1 class="h1">Top Choices</h1>
+    <div class="item-container">
+        {% for item in top_rated_items %}
+        <div class="item">
+            <h2>{{ item['Name'] }}</h2>
+            <p>Rating: {{ item['Rating'] }}</p>
+            <p>Review Count: {{ item['ReviewCount'] }}</p>
+            <img src="{{ item['ImageURL'] }}" alt="{{ item['Name'] }} image">
+
+        
+            <a href="#" onclick="openModal('{{ item['Name'] }}', {{ item['id'] }})">
+                <button class="buy-button">Buy Now</button>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if hybrid_recommendations %}
+    <h2 class="h1">Based on your Experience</h2>
+    <div class="item-container">
+        {% for item in hybrid_recommendations %}
+        <div class="item">
+            <h2>{{ item['Name'] }}</h2>
+            <p>Rating: {{ item['Rating'] }}</p>
+            <p>Review Count: {{ item['ReviewCount'] }}</p>
+            <img src="{{ item['ImageURL'] }}" alt="{{ item['Name'] }} image">
+
+            <a href="#" onclick="openModal('{{ item['Name'] }}', {{ item['id'] }})">
+                <button class="buy-button">Buy Now</button>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Modal Structure -->
+    <div id="buyModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Confirm Purchase</h2>
+            <p>Are you sure you want to buy <span id="item-name"></span>?</p>
+            <button id="confirm-buy" class="buy-button">Yes, Buy Now</button>
+            <button id="cancel-buy" class="buy-button">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Home</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-map-marker-alt"></i> No 5, Gampaha, Sri Lanka</p>
+                <p><i class="fas fa-phone"></i> 01123456789</p>
+                <p><i class="fas fa-envelope"></i> electromart@gmail.com</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-media">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <img src="static/logo.png" alt="Logo" class="footer-logo">
+            <p>&copy; 2024 ElectroMart. All rights reserved.</p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Get modal element
+        const modal = document.getElementById("buyModal");
+        const confirmButton = document.getElementById("confirm-buy");
+        const cancelButton = document.getElementById("cancel-buy");
+        const closeButton = document.querySelector(".close-button");
+
+        // Open modal when Buy Now button is clicked
+        function openModal(itemName, itemId) {
+            document.getElementById("item-name").innerText = itemName;
+            modal.style.display = "block";
+
+            // Confirm button action
+            confirmButton.onclick = function() {
+                window.location.href = `buy/${itemId}`;
+            }
+        }
+
+        // Close modal when close button or cancel button is clicked
+        closeButton.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        cancelButton.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Close modal if clicked outside of the modal
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>

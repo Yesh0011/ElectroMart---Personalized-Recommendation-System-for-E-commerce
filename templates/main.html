@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectroMart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Search bar styles */
+        .search-container {
+            max-width: 800px;
+            margin: 20px auto;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+
+        .search-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 0 5px;
+        }
+
+        .search-container input[type="text"] {
+            flex: 4;
+        }
+
+        .search-container input[type="number"] {
+            flex: 1;
+        }
+
+        .search-button {
+            background-color: rgb(153, 3, 3);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-left: 5px;
+        }
+
+        .search-button:hover {
+            background-color: rgb(120, 0, 0);
+        }
+
+        /* Item container styles */
+        .item-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5 items per row */
+            gap: 20px;
+            padding: 20px;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        .item {
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column; /* Ensures items stack vertically */
+            justify-content: space-between; /* Distributes space evenly */
+            height: 100%; /* Ensures all cards are the same height */
+        }
+
+        .item h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .item p {
+            margin: 5px 0;
+        }
+
+        .item img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .h1{
+            color: rgb(85, 12, 3);
+            margin-top: 70px;
+            margin-bottom: 20px;
+            margin-left: 50px;
+        }
+
+        .buy-button {
+            background-color: rgb(153, 3, 3);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: auto; /* Pushes button to the bottom of the container */
+        }
+
+        .buy-button:hover {
+            background-color: rgb(120, 0, 0);
+        }
+
+        /* Footer styles */
+        .footer {
+            background-color: #e3e1e1;
+            padding: 20px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-left">
+            <img src="static/logo.png" alt="Logo">
+        </div>
+        <div class="navbar-right">
+            <a href="index"><i class="fas fa-home"></i>Home</a>
+            <a href="#">About</a>
+            <a href="logout"><button class="sign-up">Sign Out</button></a>
+        </div>
+    </nav>
+
+    <!-- Search Bar for Recommendations -->
+    <div class="search-container">
+        <form action="/main" method="POST">
+            <input type="text" name="product_name" placeholder="Enter product name" required>
+            <input type="number" name="num_results" placeholder="Number of results" required>
+            <button type="submit" class="search-button">Get Recommendations</button>
+        </form>
+    </div>
+
+    <!-- Placeholder for displaying recommendations -->
+    <h2 class="h1">Recommended Products for "{{ product_name }}":</h2>
+    <div class="item-container">
+        {% if recommendations %}
+            {% for item in recommendations %}
+            <div class="item">
+                <h2>{{ item['Name'] }}</h2>
+                <p>Rating: {{ item['Rating'] }}</p>
+                <p>Review Count: {{ item['ReviewCount'] }}</p>
+                <img src="{{ item['ImageURL'] }}" alt="{{ item['Name'] }} image">
+                <a href="buy/{{ item['id'] }}"><button class="buy-button">Buy Now</button></a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No recommendations available.</p>
+        {% endif %}
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Home</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-map-marker-alt"></i> No 5, Gampaha, Sri Lanka</p>
+                <p><i class="fas fa-phone"></i> 01123456789</p>
+                <p><i class="fas fa-envelope"></i> electromart@gmail.com</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-media">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <img src="static/logo.png" alt="Logo" class="footer-logo">
+            <p>&copy; 2024 ElectroMart. All rights reserved.</p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+</body>
+</html>

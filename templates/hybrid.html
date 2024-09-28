@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid Recommendations</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .recommendations-header {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .recommendation-item {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        .recommendation-item img {
+            max-width: 100px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-item h2 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .recommendation-item p {
+            margin: 5px 0;
+        }
+
+        .buy-button {
+            background-color: rgb(153, 3, 3);
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .buy-button:hover {
+            background-color: rgb(120, 0, 0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="recommendations-header">Hybrid Recommendations for You</h1>
+
+        <!-- If there are recommendations, display them -->
+        {% if recommendations %}
+            <div class="recommendations-list">
+                {% for item in recommendations %}
+                <div class="recommendation-item">
+                    <img src="{{ item['ImageURL'] }}" alt="{{ item['Name'] }}">
+                    <h2>{{ item['Name'] }}</h2>
+                    <p>Rating: {{ item['Rating'] }}</p>
+                    <p>Reviews: {{ item['ReviewCount'] }}</p>
+                    <a href="buy/{{ item['id'] }}">
+                        <button class="buy-button">Buy Now</button>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No recommendations found. Please try searching for a product.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>

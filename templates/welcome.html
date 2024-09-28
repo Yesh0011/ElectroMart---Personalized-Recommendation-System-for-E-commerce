@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectroMart</title>
+    <!-- Link to font awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Link to the external CSS file -->
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; 
+            height: 0;
+            margin-bottom: 30px;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .search-button {
+            background-color: rgb(153, 3, 3);
+            color: white;
+            padding: 15px 30px;
+            font-size: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .search-button:hover {
+            background-color: rgb(120, 0, 0);
+        }
+
+        .navbar-right a {
+            display: inline-block; 
+            text-decoration: none; 
+        }
+
+        .navbar-right button {
+            display: inline-block; 
+        }
+
+        .navbar-right a:hover {
+            background-color: #575757;  
+        }
+
+        .h1 {
+            margin-top: 50px;
+            color: rgb(83, 2, 18);
+            margin-left: 30px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+            height: 63%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        
+        #modalImage {
+            max-width: 100%; 
+            max-height: 200px; 
+            margin-bottom: 15px;
+            object-fit: contain; 
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        
+        <div class="navbar-left">
+            <img src="static/logo.png" alt="Logo">
+        </div>
+
+        
+        <div class="navbar-right">
+            <a href="/"><i class="fas fa-home"></i>Home</a>
+            <a href="#">About</a>
+            <a href="signin"><button class="sign-in">Sign In</button></a>
+            <a href="signup"><button class="sign-up">Sign Up</button></a>
+        </div>
+    </nav>
+
+    <!-- Video Section -->
+    <div class="video-container">
+        <video autoplay loop muted playsinline>
+            <source src="static/video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <h1 class="h1">Top Choices</h1>
+    <div class="item-container">
+        {% for item in top_rated_items %}
+        <div class="item">
+            <h2>{{ item['Name'] }}</h2>
+            <p>Rating: {{ item['Rating'] }}</p>
+            <p>Review Count: {{ item['ReviewCount'] }}</p>
+            <img src="{{ item['ImageURL'] }}" alt="{{ item['Name'] }} image">
+            <button class="buy-button" onclick="openModal('{{ item['Name'] }}' , '{{ item['id'] }}', '{{ item['ImageURL'] }}')">Buy Now</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Product Title</h2>
+            <img id="modalImage" src="" alt="Product Image"><br>
+            <p id="modalBody">Are you sure you want to buy this product?</p><br>
+            <a id="buyLink" href="#" class="search-button">Confirm Purchase</a>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Home</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-map-marker-alt"></i> No 5, Gampaha, Sri Lanka</p>
+                <p><i class="fas fa-phone"></i> 01123456789</p>
+                <p><i class="fas fa-envelope"></i> electromart@gmail.com</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-media">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <img src="static/logo.png" alt="Logo" class="footer-logo">
+            <p>&copy; 2024 ElectroMart. All rights reserved.</p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function openModal(productName, productId, imageUrl) {
+            document.getElementById("modalTitle").innerText = productName;
+            document.getElementById("modalImage").setAttribute("src", imageUrl);
+            document.getElementById("buyLink").setAttribute("href", "buy/" + productId);
+            document.getElementById("myModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
+
+        // Close the modal when the user clicks anywhere outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById("myModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>
